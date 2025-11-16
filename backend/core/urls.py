@@ -18,8 +18,29 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+
+@require_http_methods(["GET"])
+def index(request):
+    """Root endpoint providing API information"""
+    return JsonResponse({
+        'message': 'Welcome to Abnormal File Vault API',
+        'version': '1.0',
+        'endpoints': {
+            'files': '/api/files/',
+            'admin': '/admin/',
+        },
+        'documentation': {
+            'list_files': 'GET /api/files/',
+            'upload_file': 'POST /api/files/',
+            'get_file': 'GET /api/files/<id>/',
+            'delete_file': 'DELETE /api/files/<id>/',
+        }
+    })
 
 urlpatterns = [
+    path('', index, name='index'),
     path('admin/', admin.site.urls),
     path('api/', include('files.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
