@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment
+.venv/
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+*.sqlite3
+
+# Media/Uploads
+backend/media/uploads/*
+!backend/media/uploads/.gitkeep
+
+# Logs
+*.log
+backend/logs/*.log
+
+# Static files (generated)
+backend/staticfiles/
+
+# Environment variables
+.env
+.env.local
+
+# Submission zips
+*.zip
