@@ -5,9 +5,6 @@ This module provides validation functions for file uploads, including
 file size validation, file type validation, and filename sanitization.
 All validators follow Django's validation patterns and raise ValidationError
 when validation fails.
-
-Author: Abnormal Security
-Date: 2025-11-14
 """
 
 import os

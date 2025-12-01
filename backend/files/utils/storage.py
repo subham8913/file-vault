@@ -3,14 +3,12 @@ Storage management utilities.
 
 This module provides functions for managing user storage quotas,
 checking available space, and updating storage usage statistics.
-
-Author: Abnormal Security
-Date: 2025-11-14
 """
 
 import logging
 from django.core.exceptions import ValidationError
 from ..models import UserStorageQuota
+from ..exceptions import StorageQuotaExceeded
 from ..constants import (
     USER_STORAGE_QUOTA,
     ERROR_STORAGE_QUOTA_EXCEEDED,
@@ -188,5 +186,4 @@ def validate_storage_quota(user_id: str, file_size: int) -> None:
     """
     has_space, error = check_storage_quota(user_id, file_size)
     if not has_space:
-        # Raise as a field error for 'file' so it appears in response.data['file']
-        raise ValidationError({'file': error})
+        raise StorageQuotaExceeded(error)

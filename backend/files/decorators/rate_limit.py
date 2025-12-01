@@ -4,9 +4,6 @@ Rate limiting decorator for API endpoints.
 This module provides a decorator to enforce per-user rate limiting on API
 endpoints. It uses Django's cache framework to track request counts and
 enforce limits based on configurable thresholds.
-
-Author: Abnormal Security
-Date: 2025-11-14
 """
 
 import time

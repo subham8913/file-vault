@@ -4,9 +4,6 @@ Custom exception handlers for the files application.
 This module provides custom exception handling to ensure consistent
 error responses across the API. All exceptions are logged and returned
 with appropriate HTTP status codes and error messages.
-
-Author: Abnormal Security
-Date: 2025-11-14
 """
 
 import logging
@@ -15,7 +12,7 @@ from typing import Any, Dict, Optional
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.http import Http404
 from rest_framework import status
-from rest_framework.exceptions import ValidationError as DRFValidationError
+from rest_framework.exceptions import ValidationError as DRFValidationError, APIException
 from rest_framework.response import Response
 from rest_framework.views import exception_handler as drf_exception_handler
 
@@ -24,9 +21,17 @@ from .constants import (
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
     HTTP_500_INTERNAL_SERVER_ERROR,
+    ERROR_STORAGE_QUOTA_EXCEEDED,
 )
 
 logger = logging.getLogger(__name__)
+
+
+class StorageQuotaExceeded(APIException):
+    """Exception raised when user storage quota is exceeded."""
+    status_code = 429
+    default_detail = ERROR_STORAGE_QUOTA_EXCEEDED
+    default_code = 'storage_quota_exceeded'
 
 
 def custom_exception_handler(exc: Exception, context: Dict[str, Any]) -> Optional[Response]:

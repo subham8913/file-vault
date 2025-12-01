@@ -3,9 +3,6 @@ Constants and configuration values for the files application.
 
 This module contains all configuration constants used throughout the files app,
 following the principle of avoiding magic numbers and centralized configuration.
-
-Author: Abnormal Security
-Date: 2025-11-14
 """
 
 # File Upload Constraints

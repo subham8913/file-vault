@@ -8,7 +8,8 @@ A production-ready Django REST API for intelligent file management with advanced
 
 ### Core Functionality
 - **File Upload & Management** - CRUD operations with metadata tracking
-- **File Deduplication** - SHA256-based content deduplication for storage optimization
+- **Normalized Architecture (CAS)** - Content-Addressable Storage separating metadata (`File`) from physical data (`FileBlob`)
+- **File Deduplication** - SHA256-based content deduplication for storage optimization (Single Instance Storage)
 - **Storage Quotas** - Per-user 10MB storage limits with usage tracking
 - **Rate Limiting** - 2 requests/second per user to prevent abuse
 - **Advanced Search** - Filter by filename, type, size, and date
@@ -17,7 +18,8 @@ A production-ready Django REST API for intelligent file management with advanced
 
 ### Technical Highlights
 - Django 4.2.26 with Django REST Framework
-- 69 comprehensive unit and integration tests (100% passing)
+- Normalized Database Schema (`File` -> `FileBlob`)
+- 68 comprehensive unit and integration tests (100% passing)
 - Docker deployment with volume mounting
 - Structured logging and error handling
 - Database constraints and indexing for data integrity

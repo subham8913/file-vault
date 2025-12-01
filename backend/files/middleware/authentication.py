@@ -4,9 +4,6 @@ User authentication middleware.
 This module provides middleware for extracting and validating the UserId
 from the request headers. The UserId is used to track which user is making
 the request and enforce per-user rate limiting and storage quotas.
-
-Author: Abnormal Security
-Date: 2025-11-14
 """
 
 import re
