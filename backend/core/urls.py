@@ -35,7 +35,11 @@ def index(request):
             'list_files': 'GET /api/files/',
             'upload_file': 'POST /api/files/',
             'get_file': 'GET /api/files/<id>/',
+            'update_file': 'PATCH /api/files/<id>/',
             'delete_file': 'DELETE /api/files/<id>/',
+            'download_file': 'GET /api/files/<id>/download/',
+            'storage_stats': 'GET /api/files/storage_stats/',
+            'file_types': 'GET /api/files/file_types/',
         }
     })
 

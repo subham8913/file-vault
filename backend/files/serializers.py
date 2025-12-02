@@ -46,6 +46,7 @@ class FileSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
     size = serializers.IntegerField(read_only=True)
     file_hash = serializers.CharField(source='blob.file_hash', read_only=True)
+    original_filename = serializers.CharField(required=False)
     
     class Meta:
         """Serializer metadata configuration."""
@@ -61,7 +62,7 @@ class FileSerializer(serializers.ModelSerializer):
             'file_hash',
             'uploaded_at'
         ]
-        read_only_fields = ['id', 'user_id', 'file_hash', 'uploaded_at', 'original_filename', 'file_type']
+        read_only_fields = ['id', 'user_id', 'file_hash', 'uploaded_at', 'file_type']
         
     def get_url(self, obj) -> str:
         if obj.blob and obj.blob.file:

@@ -69,6 +69,34 @@ class TestHelper:
         url = f"{API_ENDPOINT}storage_stats/"
         return requests.get(url, headers=headers, timeout=TIMEOUT)
 
+    @staticmethod
+    def get_file(file_id: str, user_id: str) -> requests.Response:
+        """Get file details"""
+        headers = {"UserId": user_id}
+        url = f"{API_ENDPOINT}{file_id}/"
+        return requests.get(url, headers=headers, timeout=TIMEOUT)
+
+    @staticmethod
+    def download_file(file_id: str, user_id: str) -> requests.Response:
+        """Download file content"""
+        headers = {"UserId": user_id}
+        url = f"{API_ENDPOINT}{file_id}/download/"
+        return requests.get(url, headers=headers, timeout=TIMEOUT)
+
+    @staticmethod
+    def get_file_types(user_id: str) -> requests.Response:
+        """Get file types"""
+        headers = {"UserId": user_id}
+        url = f"{API_ENDPOINT}file_types/"
+        return requests.get(url, headers=headers, timeout=TIMEOUT)
+
+    @staticmethod
+    def update_file(file_id: str, user_id: str, data: Dict) -> requests.Response:
+        """Update file metadata"""
+        headers = {"UserId": user_id}
+        url = f"{API_ENDPOINT}{file_id}/"
+        return requests.patch(url, json=data, headers=headers, timeout=TIMEOUT)
+
 
 @pytest.fixture(scope="function")
 def cleanup_users(request):
@@ -508,6 +536,83 @@ class TestSearchFiltering:
             f"invoice file ID should not be in results, got: {file_ids}"
         
         print(f"✅ test_search_filter: Search filtering works correctly (found {len(results)} matching files)")
+
+
+# =============================================================================
+# Test Suite 6: Additional Endpoints (Retrieve, Download, Update)
+# =============================================================================
+
+class TestAdditionalEndpoints:
+    """Test remaining endpoints for full coverage"""
+
+    def test_root_endpoint(self):
+        """Test the root endpoint"""
+        response = requests.get(BASE_URL, timeout=TIMEOUT)
+        assert response.status_code == 200
+        data = response.json()
+        assert "message" in data
+        assert "endpoints" in data
+
+    def test_retrieve_and_download(self, cleanup_users):
+        """
+        Test Case: Upload, Retrieve metadata, Download content
+        """
+        user_id = "user9_complete"
+        cleanup_users(user_id)
+
+        # Arrange
+        content = TestHelper.create_file_content(1024, "Download_Test_")
+        filename = "download_me.txt"
+
+        # Act - Upload
+        upload_res = TestHelper.upload_file(filename, content, user_id)
+        assert upload_res.status_code == 201, f"Upload failed: {upload_res.text}"
+        file_id = upload_res.json()["id"]
+
+        # Act - Retrieve Metadata
+        time.sleep(0.6)
+        get_res = TestHelper.get_file(file_id, user_id)
+        assert get_res.status_code == 200, f"Retrieve failed: {get_res.text}"
+        assert get_res.json()["original_filename"] == filename
+
+        # Act - Download Content
+        time.sleep(0.6)
+        dl_res = TestHelper.download_file(file_id, user_id)
+        assert dl_res.status_code == 200, f"Download failed: {dl_res.status_code}"
+        assert dl_res.content == content
+        
+        print(f"✅ test_retrieve_and_download: Retrieve and Download work correctly")
+
+    def test_file_types_and_update(self, cleanup_users):
+        """
+        Test Case: Check file types and update filename
+        """
+        user_id = "user10_complete"
+        cleanup_users(user_id)
+
+        # Arrange
+        TestHelper.upload_file("test.pdf", b"%PDF-1.4...", user_id)
+        time.sleep(0.6)
+        res = TestHelper.upload_file("test.txt", b"plain text", user_id)
+        file_id_txt = res.json()["id"]
+
+        # Act - Get File Types
+        time.sleep(0.6)
+        types_res = TestHelper.get_file_types(user_id)
+        assert types_res.status_code == 200, f"File types failed: {types_res.text}"
+        types = types_res.json()
+        # Note: MIME type detection depends on system/lib, so we check if list is returned
+        assert isinstance(types, list), "Expected list of file types"
+        assert len(types) > 0, "Expected at least one file type"
+
+        # Act - Update Filename (PATCH)
+        time.sleep(0.6)
+        new_name = "renamed.txt"
+        update_res = TestHelper.update_file(file_id_txt, user_id, {"original_filename": new_name})
+        assert update_res.status_code == 200, f"Update failed: {update_res.text}"
+        assert update_res.json()["original_filename"] == new_name
+
+        print(f"✅ test_file_types_and_update: File types and Metadata update work correctly")
 
 
 # =============================================================================
